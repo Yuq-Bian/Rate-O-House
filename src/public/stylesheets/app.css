@@ -1,0 +1,22 @@
+#cluster-map {
+    width: 100%;
+    height: 500px;
+}
+
+#map {
+    width: 100%;
+    height: 300px;
+}
+
+.housesUL{
+    padding-left: 0;
+}
+
+
+
+.carousel-item img {
+    width: auto;
+    height: 350px;
+    max-height: 350px;
+}
+

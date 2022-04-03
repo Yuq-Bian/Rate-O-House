@@ -1,0 +1,258 @@
+<% layout('layouts/boilerplate')%>
+<link rel="stylesheet" href="/stylesheets/stars.css">
+<div class="row">
+    <div class="col-6">
+        <div class="card mb-3">
+            <img src="<%= house.images[0].url %>" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title"><%=house.location%> $<%=house.price%>&nbsp&nbsp&nbsp<a class="badge bg-light text-primary" href="<%= house.redfinURL %> " target="_blank">View in Redfin</a></h5>
+              <p class="card-text"><%=house.description%></p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item text-muted"><%=house.streetLine%>, <%=house.city%>, <%=house.state%> <%=house.zip%></li>
+                <li class="list-group-item text-muted"><%= house.beds %> Beds &nbsp&nbsp<%= house.baths %> Baths &nbsp&nbsp<%= house.sqFt %> Sq.Ft.</li>
+                <li class="list-group-item text-muted">Year Built: &nbsp&nbsp<%= house.yearBuilt %></li>
+                <li class="list-group-item ">Ratings:
+                    <div class="text-center mb-3 mt-3">
+                    <svg version="1" xmlns="http://www.w3.org/2000/svg"  width="500" height="300" viewBox="-100 0 500 300">
+                        <%- totalRadarChart %> 
+                    </svg>
+                    </div>
+                    <div class="mb-3">
+                        <% for(let i = 0; i < 8; i++) { %>
+                        <div class="d-flex flex-row align-items-center justify-content-center">
+                            <span class="ratingDescription"><%=ratingTitle[i]%> Rating:</span>
+                            <p class="starability-result" data-rating="<%=averageReview[i]%>">
+                                Rated: <%= averageReview[i] %> stars
+                            </p>
+                        </div>
+                        <% } %> 
+                    </div>    
+                </li>
+            </ul> 
+            <div class="card-footer text-muted">
+                <p></p>
+            </div>
+        </div> 
+    </div>
+    <div class="col-6">
+        <div class="mb-3" id='map' ></div>
+        <% if(currentUser){ %>
+        <h2>Leave a Review</h2>
+        <form action="/houses/<%= house._id %>/reviews " class="mb-5 mt-3 validated-form" method="POST" novalidate enctype="multipart/form-data">
+            <div class="d-flex flex-row align-items-center">
+                <span class="ratingDescription">Community Rating:</span>
+                <fieldset class="starability-basic">
+                    <input type="radio" id="no-rate" class="input-no-rate" name="review[ratingCommunity]" value="1" checked
+                        aria-label="No rating." />
+                    <input type="radio" id="first-rate1" name="review[ratingCommunity]" value="1" />
+                    <label for="first-rate1" title="Terrible">1 star</label>
+                    <input type="radio" id="first-rate2" name="review[ratingCommunity]" value="2" />
+                    <label for="first-rate2" title="Not good">2 stars</label>
+                    <input type="radio" id="first-rate3" name="review[ratingCommunity]" value="3" />
+                    <label for="first-rate3" title="Average">3 stars</label>
+                    <input type="radio" id="first-rate4" name="review[ratingCommunity]" value="4" />
+                    <label for="first-rate4" title="Very good">4 stars</label>
+                    <input type="radio" id="first-rate5" name="review[ratingCommunity]" value="5" />
+                    <label for="first-rate5" title="Amazing">5 stars</label>
+                </fieldset>
+            </div>
+
+            <div class="d-flex flex-row align-items-center">
+                <span class="ratingDescription">Floor-Plan Rating:</span>
+                <fieldset class="starability-basic">
+                    <input type="radio" id="no-rate" class="input-no-rate" name="review[ratingPlan]" value="1" checked
+                        aria-label="No rating." />
+                    <input type="radio" id="second-rate1" name="review[ratingPlan]" value="1" />
+                    <label for="second-rate1" title="Terrible">1 star</label>
+                    <input type="radio" id="second-rate2" name="review[ratingPlan]" value="2" />
+                    <label for="second-rate2" title="Not good">2 stars</label>
+                    <input type="radio" id="second-rate3" name="review[ratingPlan]" value="3" />
+                    <label for="second-rate3" title="Average">3 stars</label>
+                    <input type="radio" id="second-rate4" name="review[ratingPlan]" value="4" />
+                    <label for="second-rate4" title="Very good">4 stars</label>
+                    <input type="radio" id="second-rate5" name="review[ratingPlan]" value="5" />
+                    <label for="second-rate5" title="Amazing">5 stars</label>
+                </fieldset>
+            </div>
+            
+            <div class="d-flex flex-row align-items-center">
+                <span class="ratingDescription">Cost-Performance-Ratio Rating:</span>
+                <fieldset class="starability-basic">
+                    <input type="radio" id="no-rate" class="input-no-rate" name="review[ratingPrice]" value="1" checked
+                        aria-label="No rating." />
+                    <input type="radio" id="third-rate1" name="review[ratingPrice]" value="1" />
+                    <label for="third-rate1" title="Terrible">1 star</label>
+                    <input type="radio" id="third-rate2" name="review[ratingPrice]" value="2" />
+                    <label for="third-rate2" title="Not good">2 stars</label>
+                    <input type="radio" id="third-rate3" name="review[ratingPrice]" value="3" />
+                    <label for="third-rate3" title="Average">3 stars</label>
+                    <input type="radio" id="third-rate4" name="review[ratingPrice]" value="4" />
+                    <label for="third-rate4" title="Very good">4 stars</label>
+                    <input type="radio" id="third-rate5" name="review[ratingPrice]" value="5" />
+                    <label for="third-rate5" title="Amazing">5 stars</label>
+                </fieldset>
+            </div>
+
+            <div class="d-flex flex-row align-items-center">
+                <span class="ratingDescription">Interior-Decoration Rating:</span>
+                <fieldset class="starability-basic">
+                    <input type="radio" id="no-rate" class="input-no-rate" name="review[ratingInterior]" value="1" checked
+                        aria-label="No rating." />
+                    <input type="radio" id="fourth-rate1" name="review[ratingInterior]" value="1" />
+                    <label for="fourth-rate1" title="Terrible">1 star</label>
+                    <input type="radio" id="fourth-rate2" name="review[ratingInterior]" value="2" />
+                    <label for="fourth-rate2" title="Not good">2 stars</label>
+                    <input type="radio" id="fourth-rate3" name="review[ratingInterior]" value="3" />
+                    <label for="fourth-rate3" title="Average">3 stars</label>
+                    <input type="radio" id="fourth-rate4" name="review[ratingInterior]" value="4" />
+                    <label for="fourth-rate4" title="Very good">4 stars</label>
+                    <input type="radio" id="fourth-rate5" name="review[ratingInterior]" value="5" />
+                    <label for="fourth-rate5" title="Amazing">5 stars</label>
+                </fieldset>
+            </div>
+
+            <div class="d-flex flex-row align-items-center">
+                <span class="ratingDescription">Landscape & Views Rating:</span>
+                <fieldset class="starability-basic">
+                    <input type="radio" id="no-rate" class="input-no-rate" name="review[ratingViews]" value="1" checked
+                        aria-label="No rating." />
+                    <input type="radio" id="fifth-rate1" name="review[ratingViews]" value="1" />
+                    <label for="fifth-rate1" title="Terrible">1 star</label>
+                    <input type="radio" id="fifth-rate2" name="review[ratingViews]" value="2" />
+                    <label for="fifth-rate2" title="Not good">2 stars</label>
+                    <input type="radio" id="fifth-rate3" name="review[ratingViews]" value="3" />
+                    <label for="fifth-rate3" title="Average">3 stars</label>
+                    <input type="radio" id="fifth-rate4" name="review[ratingViews]" value="4" />
+                    <label for="fifth-rate4" title="Very good">4 stars</label>
+                    <input type="radio" id="fifth-rate5" name="review[ratingViews]" value="5" />
+                    <label for="fifth-rate5" title="Amazing">5 stars</label>
+                </fieldset>
+            </div>
+
+            <div class="d-flex flex-row align-items-center">
+                <span class="ratingDescription">Quietness Rating:</span>
+                <fieldset class="starability-basic">
+                    <input type="radio" id="no-rate" class="input-no-rate" name="review[ratingQuietness]" value="1" checked
+                        aria-label="No rating." />
+                    <input type="radio" id="sixth-rate1" name="review[ratingQuietness]" value="1" />
+                    <label for="sixth-rate1" title="Terrible">1 star</label>
+                    <input type="radio" id="sixth-rate2" name="review[ratingQuietness]" value="2" />
+                    <label for="sixth-rate2" title="Not good">2 stars</label>
+                    <input type="radio" id="sixth-rate3" name="review[ratingQuietness]" value="3" />
+                    <label for="sixth-rate3" title="Average">3 stars</label>
+                    <input type="radio" id="sixth-rate4" name="review[ratingQuietness]" value="4" />
+                    <label for="sixth-rate4" title="Very good">4 stars</label>
+                    <input type="radio" id="sixth-rate5" name="review[ratingQuietness]" value="5" />
+                    <label for="sixth-rate5" title="Amazing">5 stars</label>
+                </fieldset>
+            </div>
+
+            <div class="d-flex flex-row align-items-center">
+                <span class="ratingDescription">Daylight Rating:</span>
+                <fieldset class="starability-basic">
+                    <input type="radio" id="no-rate" class="input-no-rate" name="review[ratingDaylight]" value="1" checked
+                        aria-label="No rating." />
+                    <input type="radio" id="seventh-rate1" name="review[ratingDaylight]" value="1" />
+                    <label for="seventh-rate1" title="Terrible">1 star</label>
+                    <input type="radio" id="seventh-rate2" name="review[ratingDaylight]" value="2" />
+                    <label for="seventh-rate2" title="Not good">2 stars</label>
+                    <input type="radio" id="seventh-rate3" name="review[ratingDaylight]" value="3" />
+                    <label for="seventh-rate3" title="Average">3 stars</label>
+                    <input type="radio" id="seventh-rate4" name="review[ratingDaylight]" value="4" />
+                    <label for="seventh-rate4" title="Very good">4 stars</label>
+                    <input type="radio" id="seventh-rate5" name="review[ratingDaylight]" value="5" />
+                    <label for="seventh-rate5" title="Amazing">5 stars</label>
+                </fieldset>
+            </div>
+
+            <div class="d-flex flex-row align-items-center">
+                <span class="ratingDescription">No-Major-Defect Rating:</span>
+                <fieldset class="starability-basic">
+                    <input type="radio" id="no-rate" class="input-no-rate" name="review[ratingDefect]" value="1" checked
+                        aria-label="No rating." />
+                    <input type="radio" id="eighth-rate1" name="review[ratingDefect]" value="1" />
+                    <label for="eighth-rate1" title="Terrible">1 star</label>
+                    <input type="radio" id="eighth-rate2" name="review[ratingDefect]" value="2" />
+                    <label for="eighth-rate2" title="Not good">2 stars</label>
+                    <input type="radio" id="eighth-rate3" name="review[ratingDefect]" value="3" />
+                    <label for="eighth-rate3" title="Average">3 stars</label>
+                    <input type="radio" id="eighth-rate4" name="review[ratingDefect]" value="4" />
+                    <label for="eighth-rate4" title="Very good">4 stars</label>
+                    <input type="radio" id="eighth-rate5" name="review[ratingDefect]" value="5" />
+                    <label for="eighth-rate5" title="Amazing">5 stars</label>
+                </fieldset>
+            </div>
+            
+            <div class="mb-3 mt-3">
+                <label class="form-label" for="body">Review Text:</label>
+                <textarea class="form-control" name="review[body]" id="body" cols="30" rows="4" required></textarea>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+            <div class="mb-3 custom-file">
+                <label for="formFileMultiple" class="form-label custom-file-label">Upload image(s):</label>
+                <input class="form-control custom-file-input" type="file" id="formFileMultiple" name="image" multiple>
+            </div>
+            <button class="btn btn-success">Submit</button>
+        </form>
+        <% } else { %>
+            <form action="/houses/<%= house._id %>" method="POST" novalidate>
+                <button class="btn btn-primary">Leave a Review</button>
+            </form>
+        <% } %> 
+
+        <h3 class="border-bottom mb-3 mt-2" >Reviews</h3>
+        <% house.reviews.forEach((review, i) => { %> 
+            <div class="card mb-3">
+                <div class="card-body">
+                    <% if(review.images.length > 0) { %>
+                    <div id="carouselExampleFade<%= review._id %>" class="carousel slide carousel-fade mb-3" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                        <% review.images.forEach((img, i) => {  %>
+                            <div class="carousel-item <%= i === 0 ? 'active' : ''%>">
+                                <img src="<%= img.url%>" class="d-block w-100" alt="">
+                            </div>
+                        <% }) %>                     
+                        </div>
+                        <% if(review.images.length > 1) { %>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade<%= review._id %>" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade<%= review._id %>" data-bs-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Next</span>
+                        </button>
+                        <% } %>
+                    </div>
+                    <% } %>                   
+                    <h5 class="card-title text-muted">Reviewed by: <%= review.author.username%></h5> 
+                    <div class="text-center mb-3">
+                        <svg version="1" xmlns="http://www.w3.org/2000/svg"  width="400" height="240" viewBox="-80 0 400 240">
+                            <%- chartArray[i] %> 
+                        </svg>
+                    </div>
+                    <p class="card-text bg-light">Review: <%=review.body%></p>
+            
+                    <%  if( currentUser && review.author.equals(currentUser._id)) { %>
+                    <div class="d-flex flex-row align-items-center">
+                        <a class="card-link btn btn-sm btn-success me-1" href="/houses/<%=house._id%>/reviews/<%=review._id%>/edit">Edit</a>
+                        <form action="/houses/<%= house._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
+                            <button class="btn btn-sm btn-secondary">Delete</button>
+                        </form>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>
+
+<script>
+    const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
+    const house = <%- JSON.stringify(house) %>;
+</script>
+<script src="/javascripts/showPageMap.js"></script>
+
